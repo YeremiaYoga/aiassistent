@@ -135,7 +135,7 @@ export function Avatar(props) {
   const group = useRef();
   const { actions, mixer } = useAnimations(animations, group);
   const [animation, setAnimation] = useState(
-    animations.find((a) => a.name === "Idle") ? "Idle" : animations[0].name // Check if Idle animation exists otherwise use first animation
+    animations.find((a) => a.name === "Idle") ? "Idle" : animations[0].name
   );
   useEffect(() => {
     actions[animation]
