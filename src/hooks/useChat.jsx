@@ -1,21 +1,26 @@
 import { createContext, useContext, useEffect, useState } from "react";
 
-const backendUrl = import.meta.env.VITE_API_URL || "http://localhost:3005";
-
 const ChatContext = createContext();
 
 export const ChatProvider = ({ children }) => {
+  const [sessionId, setSessionId] = useState(null);
+
   const chat = async (message) => {
     setLoading(true);
-    const data = await fetch(`${backendUrl}/chat`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ message }),
-    });
-    const resp = (await data.json()).messages;
-    setMessages((messages) => [...messages, ...resp]);
+    try {
+      const data = await fetch("/api/chat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ message, sessionId }),
+      });
+      const resp = await data.json();
+      if (resp.sessionId) setSessionId(resp.sessionId);
+      setMessages((messages) => [...messages, ...resp.messages]);
+    } catch (e) {
+      console.error(e);
+    }
     setLoading(false);
   };
   const [messages, setMessages] = useState([]);
